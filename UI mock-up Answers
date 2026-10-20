@@ -1,0 +1,82 @@
+a. Test this UI mock-up. Can you find any problems with this screen?
+At first glance, the screen looks like a standard payment form. However, I can see several potential issues.
+1. Missing country selection (Critical issue)
+Since this is a global SaaS company, I would expect the payment form  should support customers from different countries.
+The form has a State or Province dropdown, but there is no option to select a country. It also looks like the form was mainly designed for US addresses.
+Customers outside the US might not be able to enter their billing address correctly, which could prevent them from completing the payment.
+2. Payment amount is not clear
+The payment amount is displayed as 30.00, but there is no currency symbol.
+It is also unclear whether this is a one-time payment or a monthly or yearly subscription, and whether taxes are included.
+Customers should clearly understand what they are paying for and how much they will be charged.
+3. Credit card validation
+I would check that the system properly validates credit card numbers, rejects invalid characters, and does not accept expired cards.
+I would also expect the system to automatically detect the card type based on the card number instead of relying on the customer to select it manually.
+4. Missing CVV field
+There is no CVV field in the form.
+This does not necessarily mean the payment will fail, since some payment providers support transactions without CVV. However, I would check whether it is required by the payment provider and whether its absence affects transaction approval rates.
+5. Potential security issues
+Since the form handles sensitive payment information, I would verify that:
+- All communication is secured using HTTPS.
+- Credit card information is not exposed in logs or unnecessarily stored in the browser.
+- Payments are handled through a PCI DSS-compliant payment provider.
+- Input validation is performed on the server side as well as the client side.
+- The payment amount cannot be manipulated by modifying the request sent from the browser.
+These are potential risks to investigate, not confirmed security issues based on the mock-up alone.
+6. Usability issues
+There are several things I would improve:
+- The card number field requires users to enter numbers without spaces or dashes. It would be more user-friendly to accept formatted input and remove the separators automatically.
+- The Middle Initial field may not be relevant to customers in many countries.
+- The second address line does not have a clear label.
+- It is unclear how validation errors are displayed.
+- I would also test mobile responsiveness, keyboard navigation, and screen reader accessibility.
+7. Performance and error handling
+I would test what happens when the user clicks Continue and the server responds slowly or fails.
+The system should show a loading indicator and prevent users from submitting the payment multiple times.
+If a payment fails, the user should receive a clear error message and be able to retry without entering all non-sensitive information again.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+b. Write 2–3 sample test cases for this functionality
+Test Case 1 — Successful payment with valid information
+Objective: Verify that a customer can complete a payment using valid billing information.
+Steps:
+1. Open the payment form.
+2. Enter a valid test credit card number.
+3. Select a future expiration date.
+4. Fill in valid cardholder and billing address details.
+5. Click Continue.
+Expected Result:
+The system accepts the information, processes the payment, and displays a confirmation after the transaction is approved.
+Verify that only one payment was processed and that the charged amount is correct.
+
+Test Case 2 — Invalid input validation
+Objective: Verify that the system rejects invalid or missing information.
+Steps:
+1. Enter an invalid credit card number containing letters or too few digits.
+2. Select an expired card date.
+3. Leave one required field empty.
+4. Click Continue.
+Expected Result:
+The system prevents the user from continuing and displays clear validation messages next to the relevant fields.
+No payment request should be submitted.
+After correcting the invalid information, the user should be able to continue.
+
+Test Case 3 — International billing address
+Objective: Verify that customers outside the US can enter their billing information and complete a payment.
+Steps:
+1. Open the payment form as a customer from Israel.
+2. Try entering an Israeli billing address.
+3. Check the available options in the State or Province dropdown.
+4. Enter a valid Israeli postal code.
+5. Try to complete the payment.
+Expected Result:
+The system should support the customer's country and accept a valid local billing address without requiring fake information.
+Based on the current mock-up, this test may fail because there is no country selection.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+c. Suggest a product solution for the most severe bug you've found
+In my opinion, the most severe issue visible in this mock-up is the lack of support for international billing addresses.
+For a global SaaS company, this is not just a usability problem. It is a business issue that could lead to lost customers and revenue.
+My suggestion would be to make the billing form dynamic based on the customer's country.
+I would add a Country dropdown at the beginning of the billing address section. Once the customer selects a country, the form should display the relevant address fields and validation rules.
+For example, US customers would see State and ZIP Code fields, Israeli customers would be able to enter their local postal code, and customers from other countries would see the appropriate address format.
+I would also make sure the payment currency, total amount, applicable taxes, and billing frequency are clearly displayed.
+Rather than building and maintaining all the payment and international address logic from scratch, I would recommend using an established payment provider that supports international payments.
+This would improve the user experience, reduce payment failures, and help the company avoid unnecessary security
